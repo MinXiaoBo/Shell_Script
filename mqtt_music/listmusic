@@ -1,0 +1,20 @@
+#!/bin/ash
+find /mnt/ \( ! -regex '.*/\..*' \) -type f | grep '.mp3$' > music_list.txt
+count=$(cat music_list.txt | wc -l)
+var=1
+echo "{" > music_list.json
+while ([ "$var" -lt "$count" -o "$var" -eq "$count" ])
+do
+	path_name=$(cat ./music_list.txt |head -n $var|tail -n 1)
+	music_name=$(echo ${path_name##*/})
+	if ( [ "$var" -eq "$count" ] )
+		then
+		echo "\"music_$var\""":""\"$music_name\"" >> music_list.json
+	else
+		echo "\"music_$var\""":""\"$music_name\"""," >> music_list.json
+	fi
+	let "var++"
+done
+echo "}" >> music_list.json
+string=$(date +%s%N | md5sum | head -c 10)
+mosquitto_pub -h my_endpoint1.mqtt.iot.gz.baidubce.com -i "DeviceId-$string" -u my_endpoint1/my_thing2 -P ituCNB+wVnHM23bsN8PF4J1Q1hKHtu9v16QihcpyQdY= -t my_topic/device1 -f music_list.json

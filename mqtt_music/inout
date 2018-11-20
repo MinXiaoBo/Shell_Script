@@ -1,0 +1,4 @@
+#!/bin/ash
+. ./playmusic &
+string=$(date +%s%N | md5sum | head -c 10)
+mosquitto_sub -h my_endpoint1.mqtt.iot.gz.baidubce.com -i "DeviceId-$string" -u my_endpoint1/my_thing2 -P ituCNB+wVnHM23bsN8PF4J1Q1hKHtu9v16QihcpyQdY= -t my_topic/device1 > save.txt &

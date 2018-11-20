@@ -1,0 +1,31 @@
+#!/bin/ash
+while true
+do
+	data=$(cat ./save.txt | grep -a -v "^$")
+	if [ -n "$data" ]
+		then
+		if [ "$data" = "get_music_list" ]
+			then
+			echo "" > ./save.txt
+			. ./listmusic
+		elif [ "$data" = "pasue" ]
+			then
+			echo "" > ./save.txt
+			killall -19 madplay > /dev/null 2>&1
+		elif [ "$data" = "continue" ]
+			then
+			echo "" > ./save.txt
+			killall -18 madplay > /dev/null 2>&1
+		elif [ "$data" = "stop" ]
+			then
+			killall madplay > /dev/null 2>&1
+		else
+			path_name=$(cat ./music_list.txt | grep -a "$data")
+			killall madplay > /dev/null 2>&1
+			sleep 1
+			madplay "$path_name" > /dev/null 2>&1 &
+			echo "" > ./save.txt
+		fi
+	fi
+sleep 1
+done
